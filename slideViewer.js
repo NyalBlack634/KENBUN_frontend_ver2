@@ -1,88 +1,25 @@
+/** slideViewer.jsの関数まとめ */
 var func_slideViewer = {
+    /** スライドによる表示を開始 */
     start_slideTalk: null,
-    getHeadline: null,
+    /** 見出し画像を配置 */
     setImg: null,
+    /** スライド表示(なぜ分かれてるんだ…) */
     slideShow: null,
+    /** 見出し表示領域を生成 */
     makeShowArea: null,
+    /** 見出し表示領域を削除 */
+    deleteShowArea: null,
 }
 
+/** slideTalkViewerで使用するタグまとめ */
 var slideViewer_NameObj = {
-    slideBtn: "slideBtn",
     slideFrame: "slideFrame"
 }
 
-var slideBtn = $(`<div id="${slideViewer_NameObj.slideBtn}"></div>`);
 
-// var btn_flg = 'OFF';
-
-var slideButtontop = windowInH * 0.8; // ウィンドウの高さに合わせた位置(windowInHはLocalZooming.jsより拝借)
-var slideButtonleft = windowInW * 0.8; // ウィンドウの幅に合わせた位置(windowInWはLocalZooming.jsより拝借)
-
-slideBtn.css({
-    position: 'absolute',
-    top: slideButtontop,
-    //    left: 2050 + 'px', // もとは2450px
-    left: slideButtonleft,
-    width: `${150}px`,
-    height: `${50}px`,
-    zIndex: 2000,
-    //lineWidth : 480 + 'px',
-    textAlign: 'center',
-    lineHeight: `${50}px`,
-    color: '#ffffff',
-    backgroundColor: '#2980b9',
-    cursor: 'pointer'
-});
-
-objBody.appendChild(slideBtn[0]);
-$(`#${slideViewer_NameObj.slideBtn}`).text(`会話スライド${btn_flg}`);
-
-$(`#${slideViewer_NameObj.slideBtn}`).click(function (event) {
-    console.log("スライドボタン");
-
-    if (btn_flg === 'OFF') { // 会話モード起動処理
-        btn_flg = 'ON';
-        console.log('会話モードON');
-
-        // slideFrame = $('<div id="' + slideViewer_NameObj.slideFrame + '"></div>');
-
-        // slideFrame.css({
-        //     // display: 'none',
-        //     // top: talkModeBtn.offset().top * 1.07,
-        //     top: 0,
-        //     // left: talkModeBtn.offset().left,
-        //     left: 0,
-        //     // width: simResultAreaWidth,
-        //     width: 2000 + 'px',
-        //     // height: simResultHeight,
-        //     height: 1350 + 'px',
-        //     marginTop: 5 + 'px',
-        //     border: '1px solid #000000',
-        //     // backgroundColor: '#FFF',
-        //     backgroundColor: 'rgba(0,0,0,0.8)', // 背景のみ透明
-        //     //        padding: 2 + 'px',
-        //     position: 'absolute',
-        //     zIndex: 100,
-        // });
-
-        // objBody.appendChild(slideFrame[0]);
-        // $('#' + slideViewer_NameObj.slideBtn).text('会話スライド' + btn_flg);
-
-        // func_slideViewer.start_slideTalk();
-        // startTalk('slideViewer');
-        testTalk('slideViewer');
-
-    } else { // 会話モード終了処理
-        btn_flg = 'OFF';
-        console.log('会話モードOFF');
-
-        $(`#${slideViewer_NameObj.slideFrame}`).remove();
-        $(`#${slideViewer_NameObj.slideBtn}`).text(`会話スライド${btn_flg}`);
-
-    }
-});
-
-func_slideViewer.makeShowArea = function () {
+/** KENBUN上に見出しを表示する領域を生成 */
+func_slideViewer.makeShowArea = () => {
     slideFrame = $(`<div id="${slideViewer_NameObj.slideFrame}"></div>`);
 
     slideFrame.css({
@@ -112,7 +49,7 @@ func_slideViewer.makeShowArea = function () {
  * スライド表示
  * @param {Object} simResultInfo 発言と類似した見出し画像の情報を格納した連想配列
  */
-func_slideViewer.slideShow = function (simResultInfo) {
+func_slideViewer.slideShow = simResultInfo => {
     // console.log(speechRecognitionResult);
     // result = func_pyCom.getHeadline(speechRecognitionResult);
     console.log(simResultInfo.length);
@@ -123,7 +60,7 @@ func_slideViewer.slideShow = function (simResultInfo) {
  * 見出し画像をフレーム内に配置
  * @param {Object} simResultInfo 発言と類似した見出し画像の情報を格納した連想配列
  */
-func_slideViewer.setImg = function (simResultInfo) {
+func_slideViewer.setImg = simResultInfo => {
     console.log('*********setImg*********');
 
     $('#midashi').remove();
@@ -212,4 +149,10 @@ func_slideViewer.setImg = function (simResultInfo) {
         rows: 2,
         vertical: true, // 縦方向へのスライドを有効化
     });
+}
+
+/** KENBUN上に表示されている見出し表示領域を削除 */
+func_slideViewer.deleteShowArea = () => {
+    // document.getElementsById(slideViewer_NameObj.slideFrame).item(0).remove();
+    $(`#${slideViewer_NameObj.slideFrame}`).remove();
 }

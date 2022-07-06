@@ -1,4 +1,4 @@
-/**使用するタグまとめ*/
+/** defaultTalkViewerで使用するタグまとめ */
 var defaultTalkViewerNameObj = {
     /**見出し画像を表示*/
     midashi: {
@@ -15,14 +15,21 @@ var defaultTalkViewerNameObj = {
     loadGifArea: 'loadGifArea'
 }
 
+/** defaultTalkViewerで使用する関数まとめ(実質クラス) */
 func_defaultTalkViewer = {
     /**見出しの表示を行う関数*/
     suggestNews: {
+        /** 見出し表示領域を生成 */
         makeShowArea: null,
+        /** 切り替える際に領域が一瞬消えるのでそれをごまかす領域を生成(もっといい手があるだろ) */
         makeFrame: null,
+        /** masonry用の領域を生成(なぜ2重に使うのか…) */
         makeResultArea: null,
+        /** 類似した見出しを貼り付け */
         setImg: null,
+        /** 見出しをタイル上に配置 */
         tillingImg: null,
+        /** 見出しを削除 */
         deleteResultImg: null,
         /**見出し画像をクリックしたときの処理*/
         clickImg: null,
@@ -33,117 +40,9 @@ func_defaultTalkViewer = {
         endLoading: null,
     },
     /** 表示 */
-    defaultShow: null
-}
-
-/***************************************************************************************************************************/
-/*会話モードボタン表示のためのコード*/
-/***************************************************************************************************************************/
-
-var talkModeBtn = $('<div id="' + defaultTalkViewerNameObj.talkModeBtn + '"></div>');
-
-//var talkButtonbottom = '600px'; // ボタンの位置を下から指定, もとは10px
-var talkButtontop = windowInH * 0.59; // ウィンドウの高さに合わせた位置(windowInHはLocalZooming.jsより拝借)
-var talkButtonleft = windowInW * 0.8 // ウィンドウの幅に合わせた位置(windowInWはLocalZooming.jsより拝借)
-
-talkModeBtn.css({
-    position: 'absolute',
-    top: talkButtontop,
-    //    left: 2050 + 'px', // もとは2450px
-    left: talkButtonleft,
-    // width: 150 + 'px',
-    width: '10em',
-    // height: 50 + 'px',
-    height: '3em',
-    zIndex: 2000,
-    //lineWidth : 480 + 'px',
-    textAlign: 'center',
-    lineHeight: 50 + 'px',
-    color: '#ffffff',
-    backgroundColor: '#2980b9',
-    cursor: 'pointer'
-});
-
-btn_flg = 'OFF'
-
-objBody.appendChild(talkModeBtn[0]);
-$('#' + defaultTalkViewerNameObj.talkModeBtn).text('会話モード' + btn_flg);
-
-/***************************************************************************************************************************/
-/*会話モードボタンをクリックしたときの処理*/
-/***************************************************************************************************************************/
-$('#' + defaultTalkViewerNameObj.talkModeBtn).click(function (event) {
-    // 内部処理
-    console.log('会話ボタン: ' + btn_flg);
-
-    //    event.stopPropagation(); // 子要素をクリックしても処理しないように(できてない)
-
-    if (btn_flg === 'OFF') { // 会話モード起動処理
-        btn_flg = 'ON';
-        console.log('会話モードON');
-        $('#' + defaultTalkViewerNameObj.talkModeBtn).text('会話モード' + btn_flg); // ボタンのテキストをONに切り替え
-
-        // func_defaultTalkViewer.talkMode.startTalkMode();
-        // startTalk('talkViewer');
-        testTalk('talkViewer');
-
-    } else { // 会話モード終了処理
-        btn_flg = 'OFF';
-        console.log('会話モードOFF');
-
-        /*
-        会話モードON時に生成した枠と画像を削除
-        queue()を使いアニメーションが終わってから枠を消すようにする
-        */
-        $('#' + defaultTalkViewerNameObj.midashi.simResultArea).hide('normal')
-            .queue(function () {
-                $('#' + defaultTalkViewerNameObj.midashi.simResultArea).remove();
-            });
-        $('#' + defaultTalkViewerNameObj.midashi.talkModeFrame).hide('normal')
-            .queue(function () {
-                $('#' + defaultTalkViewerNameObj.midashi.talkModeFrame).remove();
-            });
-
-        $('#' + defaultTalkViewerNameObj.talkModeBtn).text('会話モード' + btn_flg); // ボタンのテキストをOFFに切り替え
-
-        recognition.stop();
-    }
-});
-
-/***************************************************************************************************************************/
-/*ロード画面*/
-/***************************************************************************************************************************/
-/**
- * ロード画面を表示
- * @param parent {string} - ロード画面を表示したいブロック
- */
-func_defaultTalkViewer.loading.talkModeLoading = function (parent) {
-
-    var jParent = $(parent);
-
-    var gifArea = $('<div class="' + defaultTalkViewerNameObj.loadGifArea + '"></div>');
-    var loadingImgGif = $('<img src="' + talkKenbunPathObj.loadingGifPath + '">');
-
-    gifArea.css({
-        //        position: 'absolute',
-        //        textAlign: 'center',
-        //        margin: 'auto',
-        paddingLeft: 35 + '%',
-        paddingTop: 35 + '%'
-        //        border: '1px solid #000000'
-    });
-
-    jParent.append(gifArea[0]);
-    gifArea.append(loadingImgGif);
-}
-
-/**
- * ロード画面を終了
- */
-func_defaultTalkViewer.loading.endLoading = function () {
-
-    var gifArea = $('<div class="' + defaultTalkViewerNameObj.loadGifArea + '"></div>');
-    gifArea.remove();
+    defaultShow: null,
+    /** 領域を削除 */
+    deleteShowArea: null,
 }
 
 /***************************************************************************************************************************/
@@ -151,23 +50,23 @@ func_defaultTalkViewer.loading.endLoading = function () {
 /***************************************************************************************************************************/
 
 /**見出しを表示するフレームを生成*/
-func_defaultTalkViewer.suggestNews.makeFrame = function () {
+func_defaultTalkViewer.suggestNews.makeFrame = () => {
     console.log('defaultTalkViewerのフレーム作成');
 
     //    var objBody = document.getElementsByTagName('body').item(0);
 
     // ウィンドウズのは幅によって枠の幅を調整
     // (ウィンドウの幅 - ボタンのx座標) * 0.95
-    var simResultAreaWidth = (windowInW - talkModeBtn.offset().left) * 0.95;
+    var simResultAreaWidth = (windowInW - allButton.offset().left) * 0.95;
     // ウィンドウズのは高さによって枠の高さを調整
     // (ウィンドウの高さ - ボタンのy座標) * 0.85
-    var simResultHeight = (windowInH - talkModeBtn.offset().top) * 0.85;
+    var simResultHeight = (windowInH - allButton.offset().top) * 0.85;
     var talkModeFrame = $('<div id="' + defaultTalkViewerNameObj.midashi.talkModeFrame + '"></div>');
 
     talkModeFrame.css({
         display: 'none',
-        top: talkModeBtn.offset().top * 1.07,
-        left: talkModeBtn.offset().left,
+        top: allButton.offset().top * 1.07,
+        left: allButton.offset().left,
         width: simResultAreaWidth,
         //width : 95+'px',
         height: simResultHeight,
@@ -180,8 +79,8 @@ func_defaultTalkViewer.suggestNews.makeFrame = function () {
         zIndex: 100
     });
 
-    //talkModeBtn.appendChild(talkModeFrame[0]);
-    //    $('#' + defaultTalkViewerNameObj.talkModeBtn).append(talkModeFrame[0]);
+    //allButton.appendChild(talkModeFrame[0]);
+    //    $('#' + defaultTalkViewerNameObj.allButton).append(talkModeFrame[0]);
     objBody.appendChild(talkModeFrame[0]);
 }
 
@@ -189,17 +88,17 @@ func_defaultTalkViewer.suggestNews.makeFrame = function () {
  * 画像を表示する枠を生成
  * フレームの子要素として見出しを表示するための枠を生成(masonryのため)
  */
-func_defaultTalkViewer.suggestNews.makeResultArea = function () {
+func_defaultTalkViewer.suggestNews.makeResultArea = () => {
 
     var simResultArea = $('<div id="' + defaultTalkViewerNameObj.midashi.simResultArea + '"></div>');
 
-    //    var talkModeButton = $('#' + defaultTalkViewerNameObj.talkModeBtn);
+    //    var talkModeButton = $('#' + defaultTalkViewerNameObj.allButton);
     // ウィンドウのは幅によって枠の幅を調整
     // (ウィンドウの幅 - ボタンのx座標) * 0.95
-    var simResultAreaWidth = (windowInW - talkModeBtn.offset().left) * 0.95;
+    var simResultAreaWidth = (windowInW - allButton.offset().left) * 0.95;
     // ウィンドウのは高さによって枠の高さを調整
     // (ウィンドウの高さ - ボタンのy座標) * 0.85
-    var simResultHeight = (windowInH - talkModeBtn.offset().top) * 0.85;
+    var simResultHeight = (windowInH - allButton.offset().top) * 0.85;
 
     simResultArea.css({
         display: 'none',
@@ -226,7 +125,7 @@ func_defaultTalkViewer.suggestNews.makeResultArea = function () {
 /**
  * 見出し表示領域の生成
  */
-func_defaultTalkViewer.suggestNews.makeShowArea = function () {
+func_defaultTalkViewer.suggestNews.makeShowArea = () => {
     console.log("setting");
     // こいつらの位置もどうにかできないか…
     func_defaultTalkViewer.suggestNews.makeFrame(); // フレーム
@@ -247,30 +146,11 @@ func_defaultTalkViewer.suggestNews.makeShowArea = function () {
  * 画像のパスをhtmlに埋め込み, 表示
  * @param {Array} simResultInfo 画像のパスを格納したリスト
  */
-func_defaultTalkViewer.suggestNews.setImg = function (simResultInfo) {
+func_defaultTalkViewer.suggestNews.setImg = simResultInfo => {
 
     console.log('*********setImg*********');
 
     // func_defaultTalkViewer.loading.endLoading(); // ロード画面を削除
-
-    //    var simResultDiv = $('<div id=' + defaultTalkViewerNameObj.midashi.simResultDiv + '>');
-    //
-    //    //        var imgHeight = simResultImg.height(); // 画像の高さを取得
-    //
-    //    simResultDiv.css({
-    //        //            display: 'none',
-    //        //            top: 0 + 'px',
-    //        //            left: 0 + 'px',
-    //        //            maxWidth: 100 + '%',
-    //        //            heigth: autoHeigth + 'px',
-    //        //            width: autoWidth + 'px',
-    //        //margin: 5 + 'px',
-    //        width: 98 + 'px',
-    //        height: 98 + 'px',
-    //        //            size: 100 + 'px',
-    //        position: 'absolute',
-    //        border: "1px solid #000000",
-    //    });
 
     for (var i = 0; i < simResultInfo.length; i++) {
         /*見出し画像の情報を取得*/
@@ -348,7 +228,7 @@ func_defaultTalkViewer.suggestNews.setImg = function (simResultInfo) {
 
 
 /**画像をタイル状配置*/
-func_defaultTalkViewer.suggestNews.tillingImg = function () {
+func_defaultTalkViewer.suggestNews.tillingImg = () => {
     //    var $grid = $('#' + defaultTalkViewerNameObj.midashi.simResultArea).masonry({
     //        itemSelector: '.' + defaultTalkViewerNameObj.midashi.simResultImg,
     //        columnWidth: 100,
@@ -361,10 +241,11 @@ func_defaultTalkViewer.suggestNews.tillingImg = function () {
         //horizontalOrder: true
     });
 
-    var simResultHeight = (windowInH - talkModeBtn.offset().top) * 0.85;
+    var simResultHeight = (windowInH - allButton.offset().top) * 0.85;
 
     // なぜか以下が必要
-    function completePreLayoutruiji() {
+    // function completePreLayoutruiji() {
+    completePreLayoutruiji = () => {
         console.log("once");
         var $area = $("#" + defaultTalkViewerNameObj.midashi.simResultArea);
         $area.css({
@@ -378,7 +259,7 @@ func_defaultTalkViewer.suggestNews.tillingImg = function () {
 }
 
 /**表示されている見出し画像を削除(現在は使用していない)*/
-func_defaultTalkViewer.suggestNews.deleteResultImg = function () {
+func_defaultTalkViewer.suggestNews.deleteResultImg = () => {
 
     if ($('.' + defaultTalkViewerNameObj.midashi.simResultImg).length) { // このクラスが存在する場合
 
@@ -387,10 +268,30 @@ func_defaultTalkViewer.suggestNews.deleteResultImg = function () {
     }
 }
 
-func_defaultTalkViewer.defaultShow = function (result) {
+/**
+ * KENBUN上に表示
+ * @param {Array} result 発話と類似した見出しの情報 
+ */
+func_defaultTalkViewer.defaultShow = result => {
     // console.log(speechRecognitionResult);
     // result = func_pyCom.getHeadline(speechRecognitionResult);
     console.log(result.length);
     func_defaultTalkViewer.suggestNews.setImg(result);
     func_defaultTalkViewer.suggestNews.tillingImg();
+}
+
+/** KENBUN上に表示されている見出し表示領域を削除 */
+func_defaultTalkViewer.deleteShowArea = () => {
+    /*
+        会話モードON時に生成した枠と画像を削除
+        queue()を使いアニメーションが終わってから枠を消すようにする
+        */
+    $('#' + defaultTalkViewerNameObj.midashi.simResultArea).hide('normal')
+        .queue(function () {
+            $('#' + defaultTalkViewerNameObj.midashi.simResultArea).remove();
+        });
+    $('#' + defaultTalkViewerNameObj.midashi.talkModeFrame).hide('normal')
+        .queue(function () {
+            $('#' + defaultTalkViewerNameObj.midashi.talkModeFrame).remove();
+        });
 }

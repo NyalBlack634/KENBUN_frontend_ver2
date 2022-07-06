@@ -1,76 +1,36 @@
+/** fadeViewerで使用する関数まとめ */
 func_fadeViewer = {
+    /** 見出し画像を貼り付け */
     setImg: null,
+    /** 見出し画像を変更 */
     changeImg: null,
+    /** フェードイン表示開始 */
     fadeShow: null,
-    makeShowArea: null
+    /** 見出し表示領域を生成 */
+    makeShowArea: null,
+    /** 見出し表示領域を削除 */
+    deleteShowArea: null,
 }
 
+
+/** fadeTalkViewerで使用するタグまとめ */
 fadeViewer_NameObj = {
-    fadeBtn: 'fadeBtn',
     fadeFrame: 'fadeFrame',
     fadeBox: 'fadeBox'
 }
-
-var fadeBtn = $('<div id="' + fadeViewer_NameObj.fadeBtn + '"></div>');
-// var btn_flg = "OFF"
-
-var fadeButtontop = windowInH * 0.9; // ウィンドウの高さに合わせた位置(windowInHはLocalZooming.jsより拝借)
-var fadeButtonleft = windowInW * 0.9; // ウィンドウの幅に合わせた位置(windowInWはLocalZooming.jsより拝借)
-
-fadeBtn.css({
-    position: 'absolute',
-    top: fadeButtontop,
-    //    left: 2050 + 'px', // もとは2450px
-    left: fadeButtonleft,
-    width: 150 + 'px',
-    height: 50 + 'px',
-    zIndex: 2000,
-    //lineWidth : 480 + 'px',
-    textAlign: 'center',
-    lineHeight: 50 + 'px',
-    color: '#ffffff',
-    backgroundColor: '#2980b9',
-    cursor: 'pointer'
-});
-
-objBody.appendChild(fadeBtn[0]);
-$('#' + fadeViewer_NameObj.fadeBtn).text('会話フェードイン' + btn_flg);
-
-$('#' + fadeViewer_NameObj.fadeBtn).click(function (event) {
-    console.log('スライドボタン');
-
-    if (btn_flg === 'OFF') { // 会話モード起動処理
-        btn_flg = 'ON';
-        console.log('会話モードON');
-
-        testTalk('fadeViewer');
-
-    } else { // 会話モード終了処理
-        btn_flg = 'OFF';
-        console.log('会話モードOFF');
-
-        $('#' + fadeViewer_NameObj.fadeFrame).remove();
-        $('#' + fadeViewer_NameObj.fadeBtn).text('会話フェードイン' + btn_flg);
-
-    }
-});
-
-
 
 /**
  * フェードイン表示
  * @param {Array} results 発話と類似した見出し画像の情報
  */
-func_fadeViewer.fadeShow = function (results) {
+func_fadeViewer.fadeShow = results => {
     // console.log('分割枚数' + result.length);
     // test_result = result.splice(0,4);
     func_fadeViewer.setImg(results);
 }
 
-/**
- * 見出し画像表示エリアの生成
- */
-func_fadeViewer.makeShowArea = function () {
+/** 見出し画像表示エリアの生成 */
+func_fadeViewer.makeShowArea = () => {
 
     fadeFrame = $('<div class="' + fadeViewer_NameObj.fadeFrame + '"></div>');
 
@@ -99,10 +59,10 @@ func_fadeViewer.makeShowArea = function () {
 
 
 /**
- * 見出し画像のセット
+ * 見出し画像貼り付け
  * @param {Array} imgs 発話と類似した見出し画像の情報
  */
-func_fadeViewer.setImg = function (imgs) {
+func_fadeViewer.setImg = imgs => {
     // var fadeBox = $('<ul class=' + fadeViewer_NameObj.fadeBox + '>');
 
     console.log('分割枚数' + result.length);
@@ -196,9 +156,11 @@ func_fadeViewer.setImg = function (imgs) {
         clearTimeout(timer);
         btn_flg = 'OFF';
         console.log('会話モードOFF');
-
-        $('#' + fadeViewer_NameObj.fadeFrame).remove();
-        $('#' + fadeViewer_NameObj.fadeBtn).text('会話スライド' + btn_flg);
     }
 
+}
+
+/** KENBUN上に表示されている見出し表示領域を削除 */
+func_fadeViewer.deleteShowArea = () => {
+    $('#' + fadeViewer_NameObj.fadeFrame).remove();
 }

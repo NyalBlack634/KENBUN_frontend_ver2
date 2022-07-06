@@ -31,5 +31,3 @@ var objBody = document.getElementsByTagName('body').item(0);
 
 /** KENBUNの表示領域 */
 var zoomViewPort = document.getElementById('viewport');
-
-

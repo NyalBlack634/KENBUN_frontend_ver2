@@ -2,86 +2,53 @@
  * talkAddViewer.jsの関数
  */
 var func_talkAddViewer = {
+    /** 見出し表示領域を生成 */
     makeShowArea: null,
-    talkAddShow: null
+    /** 見出し提示開始 */
+    talkAddShow: null,
+    /** 見出し移動アニメーション */
+    moveTalkBox: null,
+    /** 発話に伴い見出しを増加 */
+    addTalk: null,
+    /** ボックスの色を変化 */
+    changeColorId: null,
+    /** 見出し表示領域を削除 */
+    deleteShowArea: null,
 };
 
 /**
  * talkAddViewer.jsで使用するタグ名
  */
 var talkAddViewer_NameObj = {
-    talkAddBtn: 'talkAddBtn',
     talkAddFrame: 'talkAddFrame',
     talkAddBox: 'talkAddBox'
 };
 
-/**
- * 発話によってどんどん増えていくため、グローバル変数としてIDを用意しておく
- */
+/** 発話によってどんどん増えていくため、グローバル変数としてIDを用意しておく */
 var talkAddBoxId = 0;
 
+/** 見出しを格納するボックスの色を管理 */
 var colors = [
     'rgba(128,128,0,0.8)', // 黄色
     'rgba(0,128,128,0.8)', // 青
     'rgba(0,128,0,0.8)' // 緑
 ];
-
 // ↑の色を順番に回していくためのもの
 var colorId = 0;
-function changeColorId(){
-    if(colors.length === colorId){
+
+/** 次の色に変える準備 */
+func_talkAddViewer.changeColorId = () => {
+    if (colors.length === colorId) {
         colorId = 0;
     } else {
         colorId++;
     }
-}
-
-// ボタン作成
-var talkAddBtn = $(`<div class="${talkAddViewer_NameObj.talkAddBtn}"></div>`);
-
-// var btn_flg = 'OFF';
-
-/* ボタンの設定 */
-var talkAddBtntop = windowInH * 0.9; // ウィンドウの高さに合わせた位置(windowInHはLocalZooming.jsより拝借)
-var talkAddBtnleft = windowInW * 0.8; // ウィンドウの幅に合わせた位置(windowInWはLocalZooming.jsより拝借)
-talkAddBtn.css({
-    position: 'absolute',
-    top: talkAddBtntop,
-    left: talkAddBtnleft,
-    zIndex: 2000,
-    textAlign: 'center',
-    lineHeight: `${50}px`,
-    width: '10em',
-    height: `3em`,
-    color: '#ffffff',
-    backgroundColor: '#2980b9',
-    cursor: 'pointer'
-});
-
-objBody.appendChild(talkAddBtn[0]);
-$(`.${talkAddViewer_NameObj.talkAddBtn}`).text(`発話スライド${btn_flg}`);
-
-$('.' + talkAddViewer_NameObj.talkAddBtn).click(function () {
-    console.log('talkAddボタン');
-
-    if (btn_flg === 'OFF') {
-        btn_flg = 'ON';
-        // Button表示変更
-        $(`.${talkAddViewer_NameObj.talkAddBtn}`).text(`発話スライド${btn_flg}`);
-        testTalk('talkAddViewer');
-    } else {
-        btn_flg = 'OFF';
-        // 領域削除
-        document.getElementsByClassName(talkAddViewer_NameObj.talkAddFrame).item(0).remove();
-        talkAddBoxId = 0;
-        
-    }
-});
+};
 
 /**
  * 見出し画像表示領域を生成
  */
-func_talkAddViewer.makeShowArea = function () {
+func_talkAddViewer.makeShowArea = () => {
 
     var talkAddFrame = $(`<div class="${talkAddViewer_NameObj.talkAddFrame}"></div>`);
 
@@ -111,12 +78,12 @@ func_talkAddViewer.makeShowArea = function () {
  * ん？これどうやって増やすんだ…？
  * @param {Array} simResultInfo 
  */
-func_talkAddViewer.talkAddShow = function (simResultInfo) {
+func_talkAddViewer.talkAddShow = simResultInfo => {
     // console.log(simResultInfo.length);
 
-    if(document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId) != null){
-        
-        for(var i=0; i<talkAddBoxId; i++){
+    if (document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId) != null) {
+
+        for (var i = 0; i < talkAddBoxId; i++) {
             moveTalkBox(talkAddBoxId, 1000);
         }
     }
@@ -136,7 +103,10 @@ func_talkAddViewer.talkAddShow = function (simResultInfo) {
         width: `${zoomViewPort.clientWidth}px`,
         height: '500px'
     });
-    changeColorId();
+
+    // 次に使う色に変化させておく
+    func_talkAddViewer.changeColorId();
+    // ボックスを画面上に生成
     document.getElementsByClassName(talkAddViewer_NameObj.talkAddFrame)[0].appendChild(talkAddBox[0]);
 
     /** 見出し画像をリストとして格納する場所の設定 */
@@ -164,7 +134,8 @@ func_talkAddViewer.talkAddShow = function (simResultInfo) {
         imgWidth = simResultInfo[i].width; // 画像の幅
         imgHeight = simResultInfo[i].height; // 画像の高さ
 
-        if(maxHeight < imgHeight){
+        // 見出しの中で最大の高さを選ぶ
+        if (maxHeight < imgHeight) {
             maxHeight = imgHeight;
         }
 
@@ -176,7 +147,7 @@ func_talkAddViewer.talkAddShow = function (simResultInfo) {
 
         // simResultImg = $(`<img src=${talkKenbunPathObj.midashiDirPath + imgSrc} name=${imgSrc} width=${imgWidth} height=${imgHeight} class="midashi" id ="midashi${talkAddBoxId}">`);
         simResultImg = $(`<img src=${talkKenbunPathObj.midashiDirPath + imgSrc} name=${imgSrc} width=${imgSize[0]} height=${imgSize[1]} class="midashi" id ="midashi${talkAddBoxId}">`);
-        
+
         // クリックした見出しが含まれる紙面を表示
         simResultImg.on('click', clickMidashiImg);
         // simResultImg.css({
@@ -193,14 +164,15 @@ func_talkAddViewer.talkAddShow = function (simResultInfo) {
 
         // document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId).appendChild(simResultImg[0]);
     }
-    talkAddBox.css({height: maxHeight});
+    // ボックスの高さを見出しに合わせる
+    talkAddBox.css({ height: maxHeight });
     document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId).appendChild(simResultList);
 
     talkAddBoxId++; // IDナンバーを増やしておく
 
     // console.log(window.getComputedStyle(talkAddBox).top);
     // $(`#${talkAddViewer_NameObj.talkAddBox + talkAddBoxId}`).offset().top;
-    console.log($(`#${talkAddViewer_NameObj.talkAddBox+talkAddBoxId}`).length);
+    console.log($(`#${talkAddViewer_NameObj.talkAddBox + talkAddBoxId}`).length);
 
 
     // moveTalkBox(talkAddBoxId - 1, 500);
@@ -211,7 +183,13 @@ func_talkAddViewer.talkAddShow = function (simResultInfo) {
 
 }
 
-function moveTalkBox(idNum, moveY){
+
+/**
+ * 見出しを格納したボックスを上下に移動
+ * @param {int} idNum 移動させるボックスのID
+ * @param {int} moveY 移動させる距離
+ */
+func_talkAddViewer.moveTalkBox = (idNum, moveY) => {
 
     let talkAddBox = document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum);
     // let beforeY = talkBox.offsetTop + window.pageYOffset;
@@ -222,8 +200,8 @@ function moveTalkBox(idNum, moveY){
     // アニメーション
     document.querySelector(`#${talkAddViewer_NameObj.talkAddBox + idNum}`).animate(
         [ // keyframe
-            {transform: `translateY(${beforeY}px)`},
-            {transform: `translateY(${beforeY + moveY}px)`}
+            { transform: `translateY(${beforeY}px)` },
+            { transform: `translateY(${beforeY + moveY}px)` }
         ],
         {
             duration: 10000, // 再生時間
@@ -240,13 +218,24 @@ function moveTalkBox(idNum, moveY){
     // setTimeout(function(){
     //     console.log(document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum).clientTop);
     // }, 5000);
-    
+
 }
 
-function addTalk(idNum){
+/**
+ * 存在する見出しボックスを上下に移動
+ * @param {int} idNum その場にあるボックスの数
+ */
+func_talkAddViewer.addTalk = (idNum) => {
 
-    for(var i=0; i<idNum;i++){
+    for (var i = 0; i < idNum; i++) {
         moveTalkBox(idNum);
     }
+}
 
+/** KENBUN上に表示されている見出し表示領域を削除 */
+func_talkAddViewer.deleteShowArea = () => {
+    // 領域削除
+    document.getElementsByClassName(talkAddViewer_NameObj.talkAddFrame).item(0).remove();
+    // ボックスIDを初期化
+    talkAddBoxId = 0;
 }
