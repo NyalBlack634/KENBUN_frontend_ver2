@@ -146,20 +146,25 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
         imgSize = func_trimView.midashiSide.resizeImg(imgWidth, imgHeight); // 画像の縮小後のサイズ (0:幅, 1:高さ)
 
         // simResultImg = $(`<img src=${talkKenbunPathObj.midashiDirPath + imgSrc} name=${imgSrc} width=${imgWidth} height=${imgHeight} class="midashi" id ="midashi${talkAddBoxId}">`);
-        simResultImg = $(`<img src=${talkKenbunPathObj.midashiDirPath + imgSrc} name=${imgSrc} width=${imgSize[0]} height=${imgSize[1]} class="midashi" id ="midashi${talkAddBoxId}">`);
+        // simResultImg = $(`<img src=${talkKenbunPathObj.midashiDirPath + imgSrc} name=${imgSrc} width=${imgSize[0]} height=${imgSize[1]} class="midashi" id ="midashi${talkAddBoxId}">`);
+        simResultImg = document.createElement('img');
+        simResultImg.src = talkKenbunPathObj.midashiDirPath + imgSrc;
+        simResultImg.setAttribute('name', imgSrc);
+        simResultImg.style.width = imgSize[0];
+        simResultImg.style.height = imgSize[1];
+        simResultImg.className = "midashi";
+        simResultImg.id = `midashi${talkAddBoxId}`;
 
         // クリックした見出しが含まれる紙面を表示
-        simResultImg.on('click', clickMidashiImg);
-        // simResultImg.css({
-        //     width: '20%',
-        //     height: '20%'
-        // });
+        // simResultImg.on('click', clickMidashiImg);
+        simResultImg.addEventListener('click', clickMidashiImg);
 
         // 見出し画像を追加
         let li_tag = document.createElement('li');
         li_tag.style.width = '20%';
         li_tag.style.height = '20%';
-        li_tag.appendChild(simResultImg[0]);
+        // li_tag.appendChild(simResultImg[0]);
+        li_tag.appendChild(simResultImg);
         simResultList.appendChild(li_tag);
 
         // document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId).appendChild(simResultImg[0]);
