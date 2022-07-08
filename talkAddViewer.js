@@ -38,7 +38,7 @@ var colorId = 0;
 
 /** 次の色に変える準備 */
 func_talkAddViewer.changeColorId = () => {
-    if (colors.length === colorId) {
+    if (colors.length === colorId + 1) {
         colorId = 0;
     } else {
         colorId++;
@@ -85,6 +85,8 @@ func_talkAddViewer.makeShowArea = () => {
     document.getElementsByClassName(talkAddViewer_NameObj.talkAddBtn).innerText = `発話スライド${btn_flg}`;
 }
 
+/** 発話ボックスを管理する配列 */
+var talkAddBoxs = [];
 
 /**
  * 発話に類似した見出しを表示(発話するたびに増やす形で)
@@ -94,12 +96,12 @@ func_talkAddViewer.makeShowArea = () => {
 func_talkAddViewer.talkAddShow = simResultInfo => {
     // console.log(simResultInfo.length);
 
-    if (document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId) != null) {
+    // if (document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId) != null) {
 
-        for (var i = 0; i < talkAddBoxId; i++) {
-            moveTalkBox(talkAddBoxId, 1000);
-        }
-    }
+    //     for (var i = 0; i < talkAddBoxId; i++) {
+    //         moveTalkBox(talkAddBoxId, 1000);
+    //     }
+    // }
 
     /** 発話に対する見出しを格納しておくボックス */
     // let talkAddBox = $(`<div class="${talkAddViewer_NameObj.talkAddBox}" id="${talkAddViewer_NameObj.talkAddBox + talkAddBoxId}">`);
@@ -198,19 +200,27 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
     // ボックスの高さを見出しに合わせる
     // talkAddBox.css({ height: maxHeight });
     talkAddBox.style.height = `${maxHeight}px`;
+
+
+    // 移動前
+    console.log(`talkAddBox.clientTop(移動前): ${talkAddBox.clientTop}`);
+    console.log(`talkAddBox.offsetTop(移動前): ${talkAddBox.offsetTop}`);
+
+    func_talkAddViewer.addTalk(maxHeight); // 今描画されているボックスを, 新しく挿入されるボックスの高さ分下に移動
+
+    talkAddBoxs.splice(talkAddBoxId, 0, talkAddBox);
     document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId).appendChild(simResultList);
 
     talkAddBoxId++; // IDナンバーを増やしておく
 
-    // console.log(window.getComputedStyle(talkAddBox).top);
-    // $(`#${talkAddViewer_NameObj.talkAddBox + talkAddBoxId}`).offset().top;
-    console.log($(`#${talkAddViewer_NameObj.talkAddBox + talkAddBoxId}`).length);
+    // func_talkAddViewer.moveTalkBox(talkAddBoxId - 1, 500);
 
+    console.log(`talkAddBox.clientTop(移動後,もしくは移動中): ${talkAddBox.clientTop}`);
+    console.log(`talkAddBox.offsetTop(移動後,もしくは移動中): ${talkAddBox.offsetTop}`);
 
-    // moveTalkBox(talkAddBoxId - 1, 500);
-
-    // setTimeout(function(){
-    //     moveTalkBox(talkAddBoxId - 1, 100);
+    // // アニメーションテスト用
+    // setTimeout(() => {
+    //     func_talkAddViewer.moveTalkBox(talkAddBox, talkAddBoxId - 1, 500);
     // }, 5000);
 
 }
@@ -218,19 +228,18 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
 
 /**
  * 見出しを格納したボックスを上下に移動
- * @param {int} idNum 移動させるボックスのID
+ * @param {Element} talkAddBox talkAddBoxを操作するElement
  * @param {int} moveY 移動させる距離
  */
-func_talkAddViewer.moveTalkBox = (idNum, moveY) => {
+func_talkAddViewer.moveTalkBox = (talkAddBox, moveY) => {
 
-    let talkAddBox = document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum);
+    // let talkAddBox = document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum);
+
     // let beforeY = talkBox.offsetTop + window.pageYOffset;
-    let beforeY = talkAddBox.clientTop;
-    console.log(document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum).clientTop);
-    // console.log(document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum));
+    // let beforeY = talkAddBox.clientTop;
+    let beforeY = talkAddBox.offsetTop;
 
-    // アニメーション
-    document.querySelector(`#${talkAddViewer_NameObj.talkAddBox + idNum}`).animate(
+    talkAddBox.animate(
         [ // keyframe
             { transform: `translateY(${beforeY}px)` },
             { transform: `translateY(${beforeY + moveY}px)` }
@@ -242,10 +251,6 @@ func_talkAddViewer.moveTalkBox = (idNum, moveY) => {
     );
 
     talkAddBox.style.top = `${beforeY + moveY}px`;
-    console.log(talkAddBox.clientTop);
-    console.log(talkAddBox);
-
-
 
     // setTimeout(function(){
     //     console.log(document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum).clientTop);
@@ -255,13 +260,13 @@ func_talkAddViewer.moveTalkBox = (idNum, moveY) => {
 
 /**
  * 存在する見出しボックスを上下に移動
- * @param {int} idNum その場にあるボックスの数
+ * @param {int} moveY Y座標に動かす量
  */
-func_talkAddViewer.addTalk = (idNum) => {
+func_talkAddViewer.addTalk = (moveY) => {
 
-    for (var i = 0; i < idNum; i++) {
-        moveTalkBox(idNum);
-    }
+    talkAddBoxs.forEach(talkAddBox => {
+        func_talkAddViewer.moveTalkBox(talkAddBox, moveY);
+    });
 }
 
 /** KENBUN上に表示されている見出し表示領域を削除 */
