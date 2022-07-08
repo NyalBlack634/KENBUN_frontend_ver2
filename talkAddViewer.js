@@ -50,26 +50,39 @@ func_talkAddViewer.changeColorId = () => {
  */
 func_talkAddViewer.makeShowArea = () => {
 
-    var talkAddFrame = $(`<div class="${talkAddViewer_NameObj.talkAddFrame}"></div>`);
+    // var talkAddFrame = $(`<div class="${talkAddViewer_NameObj.talkAddFrame}"></div>`);
+    let talkAddFrame = document.createElement('div');
+    talkAddFrame.className = talkAddViewer_NameObj.talkAddFrame;
+    talkAddFrame.style.top = `${zoomViewPort.top + window.pageXOffset}px`;
+    talkAddFrame.style.left = `${zoomViewPort.left + window.pageYOffset}px`;
+    talkAddFrame.style.width = `${zoomViewPort.clientWidth}px`;
+    talkAddFrame.style.height = `${zoomViewPort.clientHeight}px`;
+    talkAddFrame.style.marginTop = '5px';
+    talkAddFrame.style.border = '1px solid #000000';
+    talkAddFrame.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // 背景のみ透明
+    talkAddFrame.style.position = 'absolute';
+    talkAddFrame.style.zIndex = 100;
 
-    talkAddFrame.css({
-        // top: 0,
-        top: `${zoomViewPort.top + window.pageXOffset}px`,
-        // left: 0,
-        left: `${zoomViewPort.left + window.pageYOffset}px`,
-        // width: `${2000}px`,
-        width: `${zoomViewPort.clientWidth}px`,
-        // height: `${1350}px`,
-        height: `${zoomViewPort.clientHeight}px`,
-        marginTop: `${5}px`,
-        border: '1px solid #000000',
-        backgroundColor: 'rgba(0,0,0,0.8)', // 背景のみ透明
-        position: 'absolute',
-        zIndex: 100
-    });
+    // talkAddFrame.css({
+    //     // top: 0,
+    //     top: `${zoomViewPort.top + window.pageXOffset}px`,
+    //     // left: 0,
+    //     left: `${zoomViewPort.left + window.pageYOffset}px`,
+    //     // width: `${2000}px`,
+    //     width: `${zoomViewPort.clientWidth}px`,
+    //     // height: `${1350}px`,
+    //     height: `${zoomViewPort.clientHeight}px`,
+    //     marginTop: `${5}px`,
+    //     border: '1px solid #000000',
+    //     backgroundColor: 'rgba(0,0,0,0.8)', // 背景のみ透明
+    //     position: 'absolute',
+    //     zIndex: 100
+    // });
 
-    objBody.appendChild(talkAddFrame[0]);
-    $(`.${talkAddViewer_NameObj.talkAddBtn}`).text(`発話スライド${btn_flg}`);
+    // objBody.appendChild(talkAddFrame[0]);
+    objBody.appendChild(talkAddFrame);
+    // $(`.${talkAddViewer_NameObj.talkAddBtn}`).text(`発話スライド${btn_flg}`);
+    document.getElementsByClassName(talkAddViewer_NameObj.talkAddBtn).innerText = `発話スライド${btn_flg}`;
 }
 
 
@@ -89,25 +102,38 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
     }
 
     /** 発話に対する見出しを格納しておくボックス */
-    let talkAddBox = $(`<div class="${talkAddViewer_NameObj.talkAddBox}" id="${talkAddViewer_NameObj.talkAddBox + talkAddBoxId}">`);
-    talkAddBox.css({
-        display: 'box',
-        position: 'absolute',
-        top: `${zoomViewPort.clientTop}px`,
-        // display: 'flex',
-        // backgroundColor: 'rgba(255,255,0,0.8)',
-        backgroundColor: colors[colorId],
-        zIndex: 200,
-        border: '1px solid #000000',
-        // width: '1000px',
-        width: `${zoomViewPort.clientWidth}px`,
-        height: '500px'
-    });
+    // let talkAddBox = $(`<div class="${talkAddViewer_NameObj.talkAddBox}" id="${talkAddViewer_NameObj.talkAddBox + talkAddBoxId}">`);
+    // talkAddBox.css({
+    //     display: 'box',
+    //     position: 'absolute',
+    //     top: `${zoomViewPort.clientTop}px`,
+    //     // display: 'flex',
+    //     // backgroundColor: 'rgba(255,255,0,0.8)',
+    //     backgroundColor: colors[colorId],
+    //     zIndex: 200,
+    //     border: '1px solid #000000',
+    //     // width: '1000px',
+    //     width: `${zoomViewPort.clientWidth}px`,
+    //     height: '500px'
+    // });
+
+    let talkAddBox = document.createElement('div');
+    talkAddBox.className = talkAddViewer_NameObj.talkAddBox;
+    talkAddBox.id = talkAddViewer_NameObj.talkAddBox + talkAddBoxId;
+    talkAddBox.style.display = 'block';
+    talkAddBox.style.position = 'absolute';
+    talkAddBox.style.top = `${zoomViewPort.clientTop}px`;
+    talkAddBox.style.backgroundColor = colors[colorId];
+    talkAddBox.style.zIndex = 200;
+    talkAddBox.style.border = '1px solid #000000';
+    talkAddBox.style.width = `${zoomViewPort.clientWidth}px`
+    talkAddBox.style.height = '500px';
+
 
     // 次に使う色に変化させておく
     func_talkAddViewer.changeColorId();
     // ボックスを画面上に生成
-    document.getElementsByClassName(talkAddViewer_NameObj.talkAddFrame)[0].appendChild(talkAddBox[0]);
+    document.getElementsByClassName(talkAddViewer_NameObj.talkAddFrame)[0].appendChild(talkAddBox);
 
     /** 見出し画像をリストとして格納する場所の設定 */
     let simResultList = document.createElement('ul');
@@ -170,7 +196,8 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
         // document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId).appendChild(simResultImg[0]);
     }
     // ボックスの高さを見出しに合わせる
-    talkAddBox.css({ height: maxHeight });
+    // talkAddBox.css({ height: maxHeight });
+    talkAddBox.style.height = `${maxHeight}px`;
     document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId).appendChild(simResultList);
 
     talkAddBoxId++; // IDナンバーを増やしておく
