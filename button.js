@@ -94,7 +94,7 @@ modeSelector.style.marginTop = '4em';
 // modeSelector.style.top = `${(allButtonTop + allButton_native.clientHeight) * 1.02}`;
 // modeSelector.style.left = `${allButton_native.clientLeft}`;
 // modeSelector.style.display = 'none';
-modeSelector.style.visibility = 'hidden';
+modeSelector.style.visibility = 'hidden'; // 初期状態では隠す
 
 // モード選択用の画面
 let mode;
@@ -127,6 +127,17 @@ configButton.css({
     // margin: 'auto',
 });
 
+// var configButton = document.createElement('div');
+// configButton.style.position = 'absolute';
+// configButton.style.top = allButtonTop;
+// configButton.style.left = (allButtonleft + allButton_native.clientWidth) * 1.01;
+// configButton.style.width = '3em';
+// configButton.style.height = '3em';
+// configButton.style.zIndex = '2000';
+// configButton.style.textAlign = 'center';
+// configButton.style.backgroundColor = '#2980b9';
+// configButton.style.cursor = 'pointer';
+
 /** 設定ボタンの画像 */
 var configImg = $(`<img class="${buttonNameObj.configImg}" src=${talkKenbunPathObj.configImgPath}>`);
 configImg.css({
@@ -138,7 +149,7 @@ configImg.css({
     padding: '0.25em 0.25em'
 });
 // 設定ボタンを画面上に生成
-configButton.append(configImg);
+configButton.append(configImg[0]);
 objBody.appendChild(configButton[0]);
 
 // 設定ボタンを押したときの挙動
