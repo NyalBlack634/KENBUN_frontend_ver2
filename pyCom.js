@@ -82,6 +82,7 @@ func_pyCom.getHeadline = function (inputText) {
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 // 非同期通信失敗時に読みだされる
                 console.log('Error: ', errorThrown);
+                alert('類似度分析サーバーが起動されていません!!');
             }
         });
 

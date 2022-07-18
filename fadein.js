@@ -32,7 +32,7 @@ func_fadeViewer.fadeShow = results => {
 /** 見出し画像表示エリアの生成 */
 func_fadeViewer.makeShowArea = () => {
 
-    fadeFrame = $('<div class="' + fadeViewer_NameObj.fadeFrame + '"></div>');
+    let fadeFrame = $('<div class="' + fadeViewer_NameObj.fadeFrame + '"></div>');
 
     fadeFrame.css({
         // display: 'none',

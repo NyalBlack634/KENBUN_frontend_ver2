@@ -50,4 +50,32 @@ function testTalk(showMethod) {
 
         funcs_show[showMethod](result);
     }, 9000);
+
+    setTimeout(function () {
+        testText = "野球";
+        result = func_pyCom.getHeadline(testText);
+
+        let funcs_show = {
+            'talkViewer': func_defaultTalkViewer.defaultShow.bind(null, result), // thisは適当なもの
+            'slideViewer': func_slideViewer.slideShow.bind(null, result),
+            'fadeViewer': func_fadeViewer.fadeShow.bind(null, result),
+            'talkAddViewer': func_talkAddViewer.talkAddShow.bind(null, result)
+        };
+
+        funcs_show[showMethod](result);
+    }, 13000);
+
+    setTimeout(function () {
+        testText = "選挙";
+        result = func_pyCom.getHeadline(testText);
+
+        let funcs_show = {
+            'talkViewer': func_defaultTalkViewer.defaultShow.bind(null, result), // thisは適当なもの
+            'slideViewer': func_slideViewer.slideShow.bind(null, result),
+            'fadeViewer': func_fadeViewer.fadeShow.bind(null, result),
+            'talkAddViewer': func_talkAddViewer.talkAddShow.bind(null, result)
+        };
+
+        funcs_show[showMethod](result);
+    }, 16000);
 }

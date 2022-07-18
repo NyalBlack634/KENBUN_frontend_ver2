@@ -29,9 +29,9 @@ var talkAddBoxId = 0;
 
 /** 見出しを格納するボックスの色を管理 */
 var colors = [
-    'rgba(128,128,0,0.8)', // 黄色
-    'rgba(0,128,128,0.8)', // 青
-    'rgba(0,128,0,0.8)' // 緑
+    'rgba(128,128,0,0.6)', // 黄色
+    'rgba(0,128,128,0.6)', // 青
+    'rgba(0,128,0,0.6)' // 緑
 ];
 // ↑の色を順番に回していくためのもの
 var colorId = 0;
@@ -164,7 +164,7 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
 
         // 見出しの中で最大の高さを選ぶ
         if (maxHeight < imgHeight) {
-            maxHeight = imgHeight;
+            maxHeight = imgHeight * 1.05;
         }
 
         // console.log(imgSrc);
@@ -173,13 +173,20 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
         // 画像サイズを変更
         imgSize = func_trimView.midashiSide.resizeImg(imgWidth, imgHeight); // 画像の縮小後のサイズ (0:幅, 1:高さ)
 
+        // 見出しの中で最大の高さを選ぶ
+        // if (maxHeight < imgSize[1]) {
+        //     maxHeight = imgSize[1];
+        // }
+
         // simResultImg = $(`<img src=${talkKenbunPathObj.midashiDirPath + imgSrc} name=${imgSrc} width=${imgWidth} height=${imgHeight} class="midashi" id ="midashi${talkAddBoxId}">`);
         // simResultImg = $(`<img src=${talkKenbunPathObj.midashiDirPath + imgSrc} name=${imgSrc} width=${imgSize[0]} height=${imgSize[1]} class="midashi" id ="midashi${talkAddBoxId}">`);
         simResultImg = document.createElement('img');
         simResultImg.src = talkKenbunPathObj.midashiDirPath + imgSrc;
         simResultImg.setAttribute('name', imgSrc);
-        simResultImg.style.width = imgSize[0];
-        simResultImg.style.height = imgSize[1];
+        simResultImg.style.width = imgWidth;
+        // simResultImg.style.width = imgSize[0];
+        simResultImg.style.height = imgHeight;
+        // simResultImg.style.height = imgSize[1];
         simResultImg.className = "midashi";
         simResultImg.id = `midashi${talkAddBoxId}`;
 
@@ -200,14 +207,12 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
     // ボックスの高さを見出しに合わせる
     // talkAddBox.css({ height: maxHeight });
     talkAddBox.style.height = `${maxHeight}px`;
+    console.log(`maxHeight: ${maxHeight}`);
 
-
-    // 移動前
-    console.log(`talkAddBox.clientTop(移動前): ${talkAddBox.clientTop}`);
-    console.log(`talkAddBox.offsetTop(移動前): ${talkAddBox.offsetTop}`);
 
     func_talkAddViewer.addTalk(maxHeight); // 今描画されているボックスを, 新しく挿入されるボックスの高さ分下に移動
 
+    // 新しく追加したボックスを配列に格納
     talkAddBoxs.splice(talkAddBoxId, 0, talkAddBox);
     document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId).appendChild(simResultList);
 
@@ -215,8 +220,7 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
 
     // func_talkAddViewer.moveTalkBox(talkAddBoxId - 1, 500);
 
-    console.log(`talkAddBox.clientTop(移動後,もしくは移動中): ${talkAddBox.clientTop}`);
-    console.log(`talkAddBox.offsetTop(移動後,もしくは移動中): ${talkAddBox.offsetTop}`);
+
 
     // // アニメーションテスト用
     // setTimeout(() => {
@@ -233,6 +237,13 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
  */
 func_talkAddViewer.moveTalkBox = (talkAddBox, moveY) => {
 
+    console.log(`moveY: ${moveY}`)
+
+    // 移動前
+    console.log(`${talkAddBox.id} Top(移動前): ${talkAddBox.style.top}`);
+    console.log(`${talkAddBox.id} clientTop(移動前): ${talkAddBox.clientTop}`);
+    console.log(`${talkAddBox.id} offsetTop(移動前): ${talkAddBox.offsetTop}`);
+
     // let talkAddBox = document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum);
 
     // let beforeY = talkBox.offsetTop + window.pageYOffset;
@@ -242,19 +253,29 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY) => {
     talkAddBox.animate(
         [ // keyframe
             { transform: `translateY(${beforeY}px)` },
-            { transform: `translateY(${beforeY + moveY}px)` }
+            // { transform: `translateY(${beforeY + moveY}px)` }
+            { transform: `translateY(${moveY}px)` }
         ],
         {
-            duration: 10000, // 再生時間
+            duration: 2000, // 再生時間
             fill: 'forwards' // アニメーション後の状態を維持
         }
     );
+    console.log(`${talkAddBox.id}: ${beforeY}`);
+
+    // talkAddBox.style.transition = 'all 500ms liner'
+    // talkAddBox.style.transform = `translateY(${moveY}px)`;
 
     talkAddBox.style.top = `${beforeY + moveY}px`;
+    // talkAddBox.style.top = `${moveY}px`;
 
     // setTimeout(function(){
     //     console.log(document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum).clientTop);
     // }, 5000);
+
+    console.log(`${talkAddBox.id} Top(移動後,もしくは移動中): ${talkAddBox.style.top}`);
+    console.log(`${talkAddBox.id} clientTop(移動後,もしくは移動中): ${talkAddBox.clientTop}`);
+    console.log(`${talkAddBox.id} offsetTop(移動後,もしくは移動中): ${talkAddBox.offsetTop}`);
 
 }
 
@@ -263,6 +284,8 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY) => {
  * @param {int} moveY Y座標に動かす量
  */
 func_talkAddViewer.addTalk = (moveY) => {
+
+    console.log(talkAddBoxs);
 
     talkAddBoxs.forEach(talkAddBox => {
         func_talkAddViewer.moveTalkBox(talkAddBox, moveY);

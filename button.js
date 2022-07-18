@@ -22,7 +22,7 @@ const talkModes = {
 };
 
 /** 表示領域の削除処理を管理 */
-let funcs_show = {
+let funcs_areaDelete = {
     'talkViewer': func_defaultTalkViewer.deleteShowArea,
     'slideViewer': func_slideViewer.deleteShowArea,
     'fadeViewer': func_fadeViewer.deleteShowArea,
@@ -78,7 +78,7 @@ allButton_native.addEventListener('click', () => {
         // recognition.stop();
 
         // 表示領域を削除
-        funcs_show[talkMode]();
+        funcs_areaDelete[talkMode]();
     }
 });
 
