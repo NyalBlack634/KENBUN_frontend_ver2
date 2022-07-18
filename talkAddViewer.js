@@ -94,6 +94,10 @@ var talkAddBoxs = [];
  * @param {Array} simResultInfo 
  */
 func_talkAddViewer.talkAddShow = simResultInfo => {
+
+    // アニメーション再生時間
+    let durationTime = 500;
+
     // console.log(simResultInfo.length);
 
     // if (document.getElementById(talkAddViewer_NameObj.talkAddBox + talkAddBoxId) != null) {
@@ -130,6 +134,7 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
     talkAddBox.style.border = '1px solid #000000';
     talkAddBox.style.width = `${zoomViewPort.clientWidth}px`
     talkAddBox.style.height = '500px';
+    talkAddBox.style.opacity = 0; // 最初は透明(アニメーションの関係)
 
 
     // 次に使う色に変化させておく
@@ -210,7 +215,10 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
     console.log(`maxHeight: ${maxHeight}`);
 
 
-    func_talkAddViewer.addTalk(maxHeight); // 今描画されているボックスを, 新しく挿入されるボックスの高さ分下に移動
+    func_talkAddViewer.addTalk(maxHeight, durationTime); // 今描画されているボックスを, 新しく挿入されるボックスの高さ分下に移動
+    setTimeout(() => {
+        talkAddBox.style.opacity = 1; // 透明化解除
+    }, durationTime)
 
     // 新しく追加したボックスを配列に格納
     talkAddBoxs.splice(talkAddBoxId, 0, talkAddBox);
@@ -234,8 +242,9 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
  * 見出しを格納したボックスを上下に移動
  * @param {Element} talkAddBox talkAddBoxを操作するElement
  * @param {int} moveY 移動させる距離
+ * @param {int} durationTime アニメーションの再生時間(ms)
  */
-func_talkAddViewer.moveTalkBox = (talkAddBox, moveY) => {
+func_talkAddViewer.moveTalkBox = (talkAddBox, moveY, durationTime = 2000) => {
 
     console.log(`moveY: ${moveY}`)
 
@@ -248,23 +257,30 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY) => {
 
     // let beforeY = talkBox.offsetTop + window.pageYOffset;
     // let beforeY = talkAddBox.clientTop;
-    let beforeY = talkAddBox.offsetTop;
+    // let beforeY = talkAddBox.offsetTop;
+    let beforeY = talkAddBox.style.top;
+    console.log(`beforeY(px除去前): ${beforeY}`);
+    beforeY = Number(beforeY.replace('px', ''));
+    console.log(`beforeY(px除去後): ${beforeY}`);
 
     talkAddBox.animate(
         [ // keyframe
             { transform: `translateY(${beforeY}px)` },
+            // { transform: `translateY(${beforeY})` },
             // { transform: `translateY(${beforeY + moveY}px)` }
             { transform: `translateY(${moveY}px)` }
         ],
         {
-            duration: 2000, // 再生時間
-            fill: 'forwards' // アニメーション後の状態を維持
+            duration: durationTime, // 再生時間
+            fill: 'forwards', // アニメーション後の状態を維持
+            easing: 'ease-in-out'
         }
     );
     console.log(`${talkAddBox.id}: ${beforeY}`);
 
     // talkAddBox.style.transition = 'all 500ms liner'
     // talkAddBox.style.transform = `translateY(${moveY}px)`;
+    // beforeY = Number(beforeY.replace('px', ''));
 
     talkAddBox.style.top = `${beforeY + moveY}px`;
     // talkAddBox.style.top = `${moveY}px`;
@@ -282,13 +298,14 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY) => {
 /**
  * 存在する見出しボックスを上下に移動
  * @param {int} moveY Y座標に動かす量
+ * @param {int} durationTime 1つのブロックのアニメーション再生時間
  */
-func_talkAddViewer.addTalk = (moveY) => {
+func_talkAddViewer.addTalk = (moveY, durationTime = 2000) => {
 
     console.log(talkAddBoxs);
 
     talkAddBoxs.forEach(talkAddBox => {
-        func_talkAddViewer.moveTalkBox(talkAddBox, moveY);
+        func_talkAddViewer.moveTalkBox(talkAddBox, moveY, durationTime);
     });
 }
 
