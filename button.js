@@ -68,7 +68,10 @@ allButton_native.addEventListener('click', () => {
         btn_flg = 'ON';
         allButton_native.innerText = `${talkModes[talkMode] + btn_flg}`;
 
+        // テスト用
         testTalk(talkMode);
+        // 音声認識開始
+        // startTalk(talkMode);
 
     } else {
         btn_flg = 'OFF';

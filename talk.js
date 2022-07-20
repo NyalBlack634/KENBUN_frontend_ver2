@@ -24,6 +24,13 @@ recognition.continuous = true; // 連続で聞くことを可能にするため
  */
 function startTalk(showMethod) {
 
+    let funcs_show = {
+        'talkViewer': func_defaultTalkViewer.defaultShow.bind(null, result), // thisは適当なもの
+        'slideViewer': func_slideViewer.slideShow.bind(null, result),
+        'fadeViewer': func_fadeViewer.fadeShow.bind(null, result),
+        'talkAddViewer': func_talkAddViewer.talkAddShow.bind(null, result)
+    };
+
     // 表示方法によって領域を設定
     const func_setting = {
         'talkViewer': func_defaultTalkViewer.suggestNews.makeShowArea,
@@ -58,7 +65,7 @@ function startTalk(showMethod) {
 
             // 表示方法ごとに振り分ける
             // ここで宣言しないとspeechRecognitionResultが空の状態でbindされる
-            const funcs_show = {
+            funcs_show = {
                 'talkViewer': func_defaultTalkViewer.defaultShow.bind(null, result), // thisは適当なもの
                 'slideViewer': func_slideViewer.slideShow.bind(null, result),
                 'fadeViewer': func_fadeViewer.fadeShow.bind(null, result),

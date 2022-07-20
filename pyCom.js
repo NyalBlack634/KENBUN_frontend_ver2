@@ -49,7 +49,7 @@ func_pyCom.getHeadline = function (inputText) {
         /*-----------------KENBUN側でweb speech api を用いて音声認識を行うパターン-----------------*/
         fData.append('recognition_result', inputText); // FormDataに音声認識の結果を追加
 
-        fData.append('limit_num', 10);
+        fData.append('limit_num', limit_num);
 
         console.time('類似度分析要求時間');
 

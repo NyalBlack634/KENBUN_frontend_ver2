@@ -53,7 +53,7 @@ func_talkAddViewer.makeShowArea = () => {
     // var talkAddFrame = $(`<div class="${talkAddViewer_NameObj.talkAddFrame}"></div>`);
     let talkAddFrame = document.createElement('div');
     talkAddFrame.className = talkAddViewer_NameObj.talkAddFrame;
-    talkAddFrame.style.top = `${zoomViewPort.top + window.pageXOffset}px`;
+    talkAddFrame.style.top = talkAddOption.position.frameTop;
     talkAddFrame.style.left = `${zoomViewPort.left + window.pageYOffset}px`;
     talkAddFrame.style.width = `${zoomViewPort.clientWidth}px`;
     talkAddFrame.style.height = `${zoomViewPort.clientHeight}px`;
@@ -215,7 +215,9 @@ func_talkAddViewer.talkAddShow = simResultInfo => {
     console.log(`maxHeight: ${maxHeight}`);
 
 
-    func_talkAddViewer.addTalk(maxHeight, durationTime); // 今描画されているボックスを, 新しく挿入されるボックスの高さ分下に移動
+
+    // 今描画されているボックスを, 新しく挿入されるボックスの高さ分下に移動
+    func_talkAddViewer.addTalk(maxHeight, durationTime);
     setTimeout(() => {
         talkAddBox.style.opacity = 1; // 透明化解除
     }, durationTime)
@@ -250,8 +252,6 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY, durationTime = 2000) => {
 
     // 移動前
     console.log(`${talkAddBox.id} Top(移動前): ${talkAddBox.style.top}`);
-    console.log(`${talkAddBox.id} clientTop(移動前): ${talkAddBox.clientTop}`);
-    console.log(`${talkAddBox.id} offsetTop(移動前): ${talkAddBox.offsetTop}`);
 
     // let talkAddBox = document.getElementById(talkAddViewer_NameObj.talkAddBox + idNum);
 
@@ -260,15 +260,16 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY, durationTime = 2000) => {
     // let beforeY = talkAddBox.offsetTop;
     let beforeY = talkAddBox.style.top;
     console.log(`beforeY(px除去前): ${beforeY}`);
+    // 方向を決める(下方向の場合は"+"に, 上方向の場合は"-"の値になる)
     beforeY = Number(beforeY.replace('px', ''));
     console.log(`beforeY(px除去後): ${beforeY}`);
 
     talkAddBox.animate(
         [ // keyframe
-            { transform: `translateY(${beforeY}px)` },
+            // { transform: `translateY(${beforeY}px)` },
             // { transform: `translateY(${beforeY})` },
             // { transform: `translateY(${beforeY + moveY}px)` }
-            { transform: `translateY(${moveY}px)` }
+            { transform: `translateY(${beforeY + moveY}px)` }
         ],
         {
             duration: durationTime, // 再生時間
@@ -276,13 +277,22 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY, durationTime = 2000) => {
             easing: 'ease-in-out'
         }
     );
+
+    // setTimeout(() => {
+    //     console.log(`${talkAddBox.id} Top(タイム合う土語): ${talkAddBox.style.top}`);
+
+    //     // talkAddBox.style.top = `${beforeY + moveY}px`;
+    // //     // talkAddBox.style.top = `${moveY}px`;
+    // }, durationTime*2);
+
+    talkAddBox.style.top = `${beforeY + moveY}px`;
     console.log(`${talkAddBox.id}: ${beforeY}`);
 
     // talkAddBox.style.transition = 'all 500ms liner'
     // talkAddBox.style.transform = `translateY(${moveY}px)`;
     // beforeY = Number(beforeY.replace('px', ''));
 
-    talkAddBox.style.top = `${beforeY + moveY}px`;
+    // talkAddBox.style.top = `${beforeY + moveY}px`;
     // talkAddBox.style.top = `${moveY}px`;
 
     // setTimeout(function(){
@@ -290,10 +300,10 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY, durationTime = 2000) => {
     // }, 5000);
 
     console.log(`${talkAddBox.id} Top(移動後,もしくは移動中): ${talkAddBox.style.top}`);
-    console.log(`${talkAddBox.id} clientTop(移動後,もしくは移動中): ${talkAddBox.clientTop}`);
-    console.log(`${talkAddBox.id} offsetTop(移動後,もしくは移動中): ${talkAddBox.offsetTop}`);
 
 }
+
+var count = 0;
 
 /**
  * 存在する見出しボックスを上下に移動
@@ -303,10 +313,16 @@ func_talkAddViewer.moveTalkBox = (talkAddBox, moveY, durationTime = 2000) => {
 func_talkAddViewer.addTalk = (moveY, durationTime = 2000) => {
 
     console.log(talkAddBoxs);
+    console.log(talkAddBoxs.length);
 
-    talkAddBoxs.forEach(talkAddBox => {
-        func_talkAddViewer.moveTalkBox(talkAddBox, moveY, durationTime);
-    });
+    count++;
+    if(talkAddBoxs.length !== 0){
+        console.log(`------------${count}回目---------------`);
+        talkAddBoxs.forEach(talkAddBox => {
+            func_talkAddViewer.moveTalkBox(talkAddBox, moveY, durationTime);
+        });
+    }
+
 }
 
 /** KENBUN上に表示されている見出し表示領域を削除 */
